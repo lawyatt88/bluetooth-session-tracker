@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "types": ["espruino"],
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./build"
+  }
+}
