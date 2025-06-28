@@ -1,5 +1,7 @@
 "use strict";
-setTime(1751134634);
+// @ts-ignore
+const storage = require("Storage");
+setTime(1751141596);
 // set timezone
 E.setTimeZone(-4);
 let inSession = false;
@@ -16,6 +18,17 @@ const handleButtonPress = (data) => {
             : `${timeElapsed / 60} minutes`;
         const sessionStartTime = new Date(data.lastTime * 1000).toString();
         const sessionEndTime = new Date(data.time * 1000).toString();
+        const oldSessionData = storage.read("sessionData");
+        const newSessionData = [
+            ...oldSessionData,
+            {
+                timeElapsed,
+                sessionStartTime,
+                sessionEndTime,
+            },
+        ];
+        storage.writeJSON(`sessionData`, newSessionData);
+        console.log(newSessionData);
         console.log(`Session from ${sessionStartTime} to ${sessionEndTime} was ${timeElapsedString}.`);
     }
     else {

@@ -1,3 +1,6 @@
+// @ts-ignore
+const storage: EspruinoStorage = require("Storage");
+
 // SET_TIME_MARKER
 // set timezone
 E.setTimeZone(-4);
@@ -17,6 +20,16 @@ const handleButtonPress = (data: WatchData) => {
         : `${timeElapsed / 60} minutes`;
     const sessionStartTime = new Date(data.lastTime * 1000).toString();
     const sessionEndTime = new Date(data.time * 1000).toString();
+
+    const sessionData = storage.readJSON("sessionData", true) || [];
+    // add the latest session to array
+    sessionData.push({
+      timeElapsed,
+      sessionStartTime,
+      sessionEndTime,
+    });
+    console.log({ sessionData });
+    storage.writeJSON(`sessionData`, sessionData);
     console.log(
       `Session from ${sessionStartTime} to ${sessionEndTime} was ${timeElapsedString}.`
     );
