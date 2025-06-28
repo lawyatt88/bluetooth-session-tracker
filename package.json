@@ -4,13 +4,16 @@
   "description": "Track and limit session times with a Puck.js Bluetooth button",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && npm run inject-time && pbcopy < build/firmware.js",
+    "inject-time": "node injectTime.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/espruino": "^1.94.10",
+    "replace-in-file": "^8.3.0",
     "typescript": "^5.8.3"
   }
 }
