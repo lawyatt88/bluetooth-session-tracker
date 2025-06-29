@@ -3,7 +3,7 @@
     "types": ["espruino"],
     "target": "es6",
     "module": "commonjs",
-    "strict": true,
+    "strict": false,
     "outDir": "./build"
   }
 }

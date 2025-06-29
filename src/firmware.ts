@@ -5,13 +5,42 @@ const storage: EspruinoStorage = require("Storage");
 // set timezone
 E.setTimeZone(-4);
 let inSession = false;
+let lightIntervalId: number | undefined;
+
+const getIsCaseOpen = () => {
+  // Because the LED is on when the case is closed, it was reading light coming
+  // from the LED. So if the light is on, we turn it off to measure, then return
+  // it to its previous state
+  const ledState = digitalRead(LED2);
+  if (ledState === 1) digitalWrite(LED2, 0);
+  const lightMeasurement = Puck.light();
+  digitalWrite(LED2, ledState);
+  return lightMeasurement > 0.08;
+};
+
+// To preserve battery, only show light when the case is open
+const handleLight = () => {
+  // Check every second
+  let timeout = 1000;
+  lightIntervalId = setInterval(() => {
+    // Check if case is open
+    const isCaseOpen = getIsCaseOpen();
+    // If open, turn the light on, if closed, turn it off
+    if (isCaseOpen) {
+      digitalWrite(LED2, 1);
+    } else {
+      digitalWrite(LED2, 0);
+    }
+  }, timeout);
+};
 
 // on button press, turn on light and start timer
 const handleButtonPress = (data: WatchData) => {
   if (inSession === true) {
     inSession = false;
-    // turn off light
+    // turn off light & stop light timeout
     digitalWrite(LED2, 0);
+    if (lightIntervalId) clearInterval(lightIntervalId);
     // record time elapsed in minutes
     const timeElapsed = data.time - data.lastTime;
     const timeElapsedString =
@@ -35,8 +64,7 @@ const handleButtonPress = (data: WatchData) => {
     );
   } else {
     inSession = true;
-    // turn on green light
-    digitalWrite(LED2, 1);
+    handleLight();
   }
 };
 
